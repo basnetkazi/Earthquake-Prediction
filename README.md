@@ -3,7 +3,7 @@ Earthquake Data Visualization and Prediction
 
 **Project Team Member: Arun Kumar Basnet**
 
- # **Project Idea:**
+  # **Project Idea:**
 Earthquake is the most unpredictable disaster. There is no sign and symptoms and no any measure
 to learn about its occurrence in near future. According to the available data planet earth undergoes
 nearly 26 earthquakes above 4 M scale daily. But still there is no any concrete system or theory that
@@ -40,7 +40,7 @@ This project requires Python 3.5 and the following Python libraries installed:
 
 - Interpreter:** Anaconda3.0**
 
-**# Task and Experiment Performed with Output:**
+#  **Task and Experiment Performed with Output:**
 Most of the tasks completed in this project are regarding data visualization and also some
 prediction models are applied to view how predictive earthquake can be.
 1. Data Visualization:
@@ -57,5 +57,4 @@ training data and testing data were splitted and fetched using train_test_split(
 validation module. Now the LinearRegression() function under linear_model module was used to
 predict the magnitude using the linear model. The predicted earthquake was similar to the test data.
 And also the error for the prediction was calculated and it was also very less.
-
 
