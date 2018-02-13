@@ -21,6 +21,16 @@ from PyQt5 import QtGui, QtCore
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QMessageBox, QLabel, QTableView, QTableWidget,QLineEdit
+from sklearn import model_selection
+from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import accuracy_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+from sklearn.naive_bayes import GaussianNB
+from sklearn.svm import SVC
 
 
 
@@ -76,7 +86,14 @@ class prediction(QMainWindow):
 
 
     def initUi(self):
-        print("called")
+        dataset=earth
+        dataset["Year"] = dataset['Date'].dt.year
+        dataset['Magnitude'] = dataset.Magnitude.astype(int)
+        dataset['Magnitude'] = dataset.Magnitude.astype(str)
+        #dataset['Year'] = dataset.Year.astype(int)
+
+        #print(list(set(dataset["Magnitude"].values)))
+        #print(dataset.head())
         self.setGeometry(50, 50, 700, 450)
         self.setWindowTitle("ML Project")
         self.statusBar().showMessage("Earthquake Prediction Model")
@@ -149,32 +166,127 @@ class prediction(QMainWindow):
         self.label.resize(150,20)
         self.labe2.resize(150, 20)
         self.labe3.resize(150, 20)
+
+        self.array = dataset.values
+        #print(self.array)
+        self.X = self.array[:, [6,1,2]]
+        self.Y = self.array[:, 3]
+        self.validation_size = 0.20
+        self.seed = 7
+        self.X_train, self.X_validation, self.Y_train, self.Y_validation = model_selection.train_test_split(self.X, self.Y, test_size=self.validation_size,random_state=self.seed)
+        self.scoring = 'accuracy'
+        #print(self.X,self.Y)
         self.show()
 
     @pyqtSlot()
     def comp_algo(self):
-            print("done")
+        models = []
+        #print("models")
+        models.append(('LR', LogisticRegression()))
+        models.append(('LDA', LinearDiscriminantAnalysis()))
+        models.append(('KNN', KNeighborsClassifier()))
+        models.append(('CART', DecisionTreeClassifier()))
+        models.append(('NB', GaussianNB()))
+        models.append(('SVM', SVC()))
+        # evaluate each model in turn
+        results = []
+        names = []
+        #print("name")
+        for name, model in models:
+            #print("loop")
+
+            kfold = model_selection.KFold(n_splits=10, random_state=self.seed)
+            #print("kfold")
+            cv_results = model_selection.cross_val_score(model, self.X_train, self.Y_train, cv=kfold, scoring=self.scoring)
+
+            #print("cv")
+            results.append(cv_results)
+            names.append(name)
+            msg = "%s: %f (%f)" % (name, cv_results.mean(), cv_results.std())
+            print(msg)
+
+            # Compare Algorithms
+        fig = plt.figure()
+        fig.suptitle('Algorithm Comparison')
+        ax = fig.add_subplot(111)
+        plt.boxplot(results)
+        ax.set_xticklabels(names)
+        plt.show()
 
     def knn_algo(self):
-            print("done")
+        #print("knn")
+        knn = KNeighborsClassifier()
+        knn.fit(self.X_train, self.Y_train)
+        self.predictions = knn.predict(self.X_validation)
+        print(self.predictions)
+        if(self.year==""):
+            accuracy_score()
 
     def lr_algo(self):
-            print("done")
+        lr = LogisticRegression()
+        lr.fit(self.X_train, self.Y_train)
+        self.predictions = lr.predict(self.X_validation)
+        print(self.predictions)
+        if(self.year==""):
+            accuracy_score()
 
     def lda_algo(self):
-            print("done")
+        lda = LinearDiscriminantAnalysis()
+        lda.fit(self.X_train, self.Y_train)
+        self.predictions = lda.predict(self.X_validation)
+        print(self.predictions)
+        if(self.year==""):
+            accuracy_score()
+
 
     def cart_algo(self):
-            print("done")
+        cart = DecisionTreeClassifier()
+        cart.fit(self.X_train, self.Y_train)
+        self.predictions = cart.predict(self.X_validation)
+        print(self.predictions)
+        if(self.year==""):
+            accuracy_score()
+
 
     def nb_algo(self):
-            print("done")
+        nb = GaussianNB()
+        nb.fit(self.X_train, self.Y_train)
+        self.predictions = nb.predict(self.X_validation)
+        print(self.predictions)
+        if (self.year == ""):
+            accuracy_score()
 
     def svm_algo(self):
-            print("done")
+        svm = SVC()
+        svm.fit(self.X_train, self.Y_train)
+        self.predictions = svm.predict(self.X_validation)
+        print(self.predictions)
+        if (self.year == ""):
+            accuracy_score()
+
 
     def submit(self):
-            print("done")
+        print("self.X_validation")
+
+        self.year= self.lineedittime.text()
+        print("X")
+        latitude = self.lineeditlatitude.text()
+        longitude = self.lineeditlongitude.text()
+        if(self.year!="" and latitude!="" and longitude!=""):
+
+            self.year=int(self.year)
+            print("Y")
+            latitude=float(latitude)
+            longitude=float(longitude)
+
+            self.X_validation=list([[self.year, latitude, longitude]])
+            print(self.X_validation)
+
+    def accuracy(self):
+        print(accuracy_score(self.Y_validation, self.predictions))
+        print(confusion_matrix(self.Y_validation, self.predictions))
+        print(classification_report(self.Y_validation, self.predictions))
+        print(list(set(self.predictions)))
 
 
 
