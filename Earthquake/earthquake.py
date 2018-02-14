@@ -90,6 +90,7 @@ class prediction(QMainWindow):
         dataset["Year"] = dataset['Date'].dt.year
         dataset['Magnitude'] = dataset.Magnitude.astype(int)
         dataset['Magnitude'] = dataset.Magnitude.astype(str)
+        self.year=""
         #dataset['Year'] = dataset.Year.astype(int)
 
         #print(list(set(dataset["Magnitude"].values)))
@@ -187,7 +188,7 @@ class prediction(QMainWindow):
         models.append(('KNN', KNeighborsClassifier()))
         models.append(('CART', DecisionTreeClassifier()))
         models.append(('NB', GaussianNB()))
-        models.append(('SVM', SVC()))
+        #models.append(('SVM', SVC()))
         # evaluate each model in turn
         results = []
         names = []
@@ -219,8 +220,10 @@ class prediction(QMainWindow):
         knn.fit(self.X_train, self.Y_train)
         self.predictions = knn.predict(self.X_validation)
         print(self.predictions)
+        #print("done")
         if(self.year==""):
-            accuracy_score()
+
+            self.accuracy()
 
     def lr_algo(self):
         lr = LogisticRegression()
@@ -228,7 +231,7 @@ class prediction(QMainWindow):
         self.predictions = lr.predict(self.X_validation)
         print(self.predictions)
         if(self.year==""):
-            accuracy_score()
+            self.accuracy()
 
     def lda_algo(self):
         lda = LinearDiscriminantAnalysis()
@@ -236,7 +239,7 @@ class prediction(QMainWindow):
         self.predictions = lda.predict(self.X_validation)
         print(self.predictions)
         if(self.year==""):
-            accuracy_score()
+            self.accuracy()
 
 
     def cart_algo(self):
@@ -245,7 +248,8 @@ class prediction(QMainWindow):
         self.predictions = cart.predict(self.X_validation)
         print(self.predictions)
         if(self.year==""):
-            accuracy_score()
+
+            self.accuracy()
 
 
     def nb_algo(self):
@@ -254,7 +258,7 @@ class prediction(QMainWindow):
         self.predictions = nb.predict(self.X_validation)
         print(self.predictions)
         if (self.year == ""):
-            accuracy_score()
+            self.accuracy()
 
     def svm_algo(self):
         svm = SVC()
@@ -262,7 +266,7 @@ class prediction(QMainWindow):
         self.predictions = svm.predict(self.X_validation)
         print(self.predictions)
         if (self.year == ""):
-            accuracy_score()
+            self.accuracy()
 
 
     def submit(self):
