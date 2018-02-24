@@ -39,7 +39,7 @@ from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import f_regression
 
 warnings.filterwarnings('ignore')
-disasters = pd.read_csv("C:/Users/home/Downloads/Compressed/database.csv")
+disasters = pd.read_csv("database.csv")
 disasters["Date"] = pd.to_datetime(disasters["Date"])
 selected = disasters[["Date", "Latitude", "Longitude", "Magnitude", "Depth", "Type"]]
 earth = selected[selected["Type"] == "Earthquake"]
